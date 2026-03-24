@@ -163,6 +163,102 @@ void CFuncWallToggle::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 	}
 }
 
+#define TEAM_FILTER_RETRY_TIME 0.1f
+
+class CFuncTeamFilter : public CFuncWall
+{
+public:
+	void Spawn( void );
+	void EXPORT TeamPassTouch( CBaseEntity *pOther );
+	void EXPORT RestoreSolid( void );
+
+protected:
+	virtual const char *AllowedTeam( void ) const = 0;
+	BOOL IsAllowedPlayerTouching( void ) const;
+};
+
+void CFuncTeamFilter::Spawn( void )
+{
+	CFuncWall::Spawn();
+
+	pev->effects |= EF_NODRAW;
+	SetTouch( &CFuncTeamFilter::TeamPassTouch );
+}
+
+void CFuncTeamFilter::TeamPassTouch( CBaseEntity *pOther )
+{
+	if( !pOther || !pOther->IsPlayer() )
+		return;
+
+	if( !UTIL_TeamsMatch( pOther->TeamID(), AllowedTeam() ) )
+		return;
+
+	if( pev->solid != SOLID_NOT )
+	{
+		pev->solid = SOLID_NOT;
+		UTIL_SetOrigin( this, pev->origin );
+	}
+
+	SetThink( &CFuncTeamFilter::RestoreSolid );
+	pev->nextthink = gpGlobals->time + TEAM_FILTER_RETRY_TIME;
+}
+
+BOOL CFuncTeamFilter::IsAllowedPlayerTouching( void ) const
+{
+	for( int i = 1; i <= gpGlobals->maxClients; ++i )
+	{
+		CBaseEntity *pPlayer = UTIL_PlayerByIndex( i );
+		if( !pPlayer || !pPlayer->IsPlayer() || !pPlayer->IsAlive() )
+			continue;
+
+		if( !UTIL_TeamsMatch( pPlayer->TeamID(), AllowedTeam() ) )
+			continue;
+
+		const Vector &playerMins = pPlayer->pev->absmin;
+		const Vector &playerMaxs = pPlayer->pev->absmax;
+
+		if( playerMaxs.x < pev->absmin.x || playerMins.x > pev->absmax.x )
+			continue;
+		if( playerMaxs.y < pev->absmin.y || playerMins.y > pev->absmax.y )
+			continue;
+		if( playerMaxs.z < pev->absmin.z || playerMins.z > pev->absmax.z )
+			continue;
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+void CFuncTeamFilter::RestoreSolid( void )
+{
+	if( IsAllowedPlayerTouching() )
+	{
+		pev->nextthink = gpGlobals->time + TEAM_FILTER_RETRY_TIME;
+		return;
+	}
+
+	pev->solid = SOLID_BSP;
+	UTIL_SetOrigin( this, pev->origin );
+	SetThink( NULL );
+}
+
+class CFuncRedFilter : public CFuncTeamFilter
+{
+protected:
+	virtual const char *AllowedTeam( void ) const { return "red"; }
+};
+
+LINK_ENTITY_TO_CLASS( func_red_filter, CFuncRedFilter )
+
+class CFuncBlueFilter : public CFuncTeamFilter
+{
+protected:
+	virtual const char *AllowedTeam( void ) const { return "blue"; }
+};
+
+LINK_ENTITY_TO_CLASS( func_blue_filter, CFuncBlueFilter )
+
 #define SF_CONVEYOR_VISUAL	0x0001
 #define SF_CONVEYOR_NOTSOLID	0x0002
 
