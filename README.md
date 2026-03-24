@@ -1,7 +1,7 @@
 # Teammates
 This is source code of Half-Life mod "Teammates".
 
-This is based on [teammates](https://github.com/FWGS/teammates) by FWGS Team, thanks to them.
+This is based on [hlsdk-portable](https://github.com/FWGS/teammates) by FWGS Team, thanks to them.
 
 # Obtaining source code
 
