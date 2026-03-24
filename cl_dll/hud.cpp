@@ -429,9 +429,9 @@ void CHud::Init( void )
 	m_iLogo = 0;
 	m_iFOV = 0;
 	// Teammates hud color check
-	if ( CVAR_GET_STRING( "model" ) == "red" )
+	if ( CVAR_GET_STRING( "team" ) == "red" )
 		m_iHUDColor = 0x00FF0000; //255,0,0 -- LRC
-	else if ( CVAR_GET_STRING( "model" ) == "blue" )
+	else if ( CVAR_GET_STRING( "team" ) == "blue" )
 		m_iHUDColor = 0x000000FF; //0,0,255
 	else // Set hud color to white if player's model is not red or blue
 		m_iHUDColor = 0x00FFFFFF; //255,255,255
