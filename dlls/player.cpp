@@ -3013,11 +3013,11 @@ edict_t *EntSelectSpawnPoint( CBaseEntity *pPlayer )
 		nNumRandomSpawnsToTry = 0;
 		CBaseEntity* pEnt = 0;
 		
-		if( CVAR_GET_STRING( "model" ) == "red")
+		if( CVAR_GET_STRING( "team" ) == "red")
 		{
 			while( ( pEnt = UTIL_FindEntityByClassname( pEnt, "info_player_red" )))
 				nNumRandomSpawnsToTry++;
-		} else if( CVAR_GET_STRING( "model" ) == "blue" )	{
+		} else if( CVAR_GET_STRING( "team" ) == "blue" )	{
 			while( ( pEnt = UTIL_FindEntityByClassname( pEnt, "info_player_blue" )))
 				nNumRandomSpawnsToTry++;
 		} else {
@@ -3028,14 +3028,14 @@ edict_t *EntSelectSpawnPoint( CBaseEntity *pPlayer )
 
 	pSpot = g_pLastSpawn;
 	// Randomize the start spot
-	if ( CVAR_GET_STRING( "model" ) == "red" )
+	if ( CVAR_GET_STRING( "team" ) == "red" )
 	{
 		for( int i = RANDOM_LONG( 1, nNumRandomSpawnsToTry - 1 ); i > 0; i-- )
 			pSpot = UTIL_FindEntityByClassname( pSpot, "info_player_red" );
 		if( FNullEnt( pSpot ) )  // skip over the null point
 			pSpot = UTIL_FindEntityByClassname( pSpot, "info_player_red" );
 	}
-	if ( CVAR_GET_STRING( "model" ) == "blue" )
+	if ( CVAR_GET_STRING( "team" ) == "blue" )
 	{
 		for( int i = RANDOM_LONG( 1, nNumRandomSpawnsToTry - 1 ); i > 0; i-- )
 			pSpot = UTIL_FindEntityByClassname( pSpot, "info_player_blue" );
@@ -3054,12 +3054,12 @@ edict_t *EntSelectSpawnPoint( CBaseEntity *pPlayer )
 			{
 				if( pSpot->pev->origin == Vector( 0, 0, 0 ) )
 				{
-					if( CVAR_GET_STRING( "model" ) == "red" )
+					if( CVAR_GET_STRING( "team" ) == "red" )
 					{
 						// Red spawnpoint
 						pSpot = UTIL_FindEntityByClassname( pSpot, "info_player_red" );
 						continue;
-					}	else if( CVAR_GET_STRING( "model" ) == "blue" )	{
+					}	else if( CVAR_GET_STRING( "team" ) == "blue" )	{
 						// Blue spawnpoint
 						pSpot = UTIL_FindEntityByClassname( pSpot, "info_player_blue" );
 						continue;
@@ -3075,9 +3075,9 @@ edict_t *EntSelectSpawnPoint( CBaseEntity *pPlayer )
 			}
 		}
 		// increment pSpot
-		if( CVAR_GET_STRING( "model" ) == "red" )
+		if( CVAR_GET_STRING( "team" ) == "red" )
 			pSpot = UTIL_FindEntityByClassname( pSpot, "info_player_red" );
-		else if( CVAR_GET_STRING( "model" ) == "blue" )
+		else if( CVAR_GET_STRING( "team" ) == "blue" )
 			pSpot = UTIL_FindEntityByClassname( pSpot, "info_player_blue" );
 		else
 			pSpot = UTIL_FindEntityByClassname( pSpot, "info_player_deathmatch" );
