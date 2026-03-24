@@ -57,7 +57,7 @@ CHalfLifeTeamplay::CHalfLifeTeamplay()
 		}
 	}
 	// Teammates only allows red and blue teams.
-	if( m_szTeamList[0] != "red;blue" )
+	if( m_szTeamList[0] != 'red;blue' )
 	{
 		CVAR_SET_STRING( "mp_teamlist", "red;blue" );
 		m_teamLimit = TRUE;
